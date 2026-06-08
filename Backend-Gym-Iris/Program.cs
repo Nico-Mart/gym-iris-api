@@ -2,8 +2,7 @@ using Backend_Gym_Iris.Data;
 using Backend_Gym_Iris.Repositories;
 using Backend_Gym_Iris.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +22,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
         policy.WithOrigins(
-            "http://localhost:5173",                   
-            "https://gymiris-front.vercel.app",        
+            "http://localhost:5173",
+            "https://gym-iris-web.vercel.app",        
             "https://www.gymiris.com.ar",              
             "https://gymiris.com.ar"
         )
@@ -46,40 +45,9 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Gym Iris API",
-        Version = "v1",
-        Description = "API para gestión de gimnasio - Usuarios, Pagos y Administración",
-        Contact = new OpenApiContact
-        {
-            Name = "Gym Iris",
-            Email = "contacto@gymiris.com"
-        }
-    });
-
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath))
-    {
-        c.IncludeXmlComments(xmlPath);
-    }
-});
 
 var app = builder.Build();
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gym Iris API v1");
-        c.RoutePrefix = string.Empty; 
-    });
-}
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
